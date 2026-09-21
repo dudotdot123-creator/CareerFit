@@ -1,25 +1,43 @@
-// ---------- silent save to Google Sheet ----------
-const SHEET_URL = "https://script.google.com/macros/s/AKfycbwPgyFeCwETpp7DyhNzpTmr0yC159jyCj5vYbo85bx1AVr5JMADZiUtPEJT-oKmbaiVUw/exec";
-const SHEET_TOKEN = "CareerFit"; // must match TOKEN in Apps Script
-
-function sendToSheet(d) {
-  if (!SHEET_URL || SHEET_URL.includes("-https://script.google.com/macros/s/AKfycbwPgyFeCwETpp7DyhNzpTmr0yC159jyCj5vYbo85bx1AVr5JMADZiUtPEJT-oKmbaiVUw/exechttps://script.google.com/macros/s/AKfycbwPgyFeCwETpp7DyhNzpTmr0yC159jyCj5vYbo85bx1AVr5JMADZiUtPEJT-oKmbaiVUw/exec")) return;
-  try {
-    fetch(SHEET_URL, {
-      method: "POST",
-      mode: "no-cors",
-      headers: { "Content-Type": "text/plain;charset=utf-8" },
-      body: JSON.stringify({ token: SHEET_TOKEN, ...d })
-    }).catch(() => {});
-  } catch (e) {}
-}
-
 // ---------- sound effects (off by default; 🔊 toggle turns them on) ----------
 const clickSound = new Audio("click.mp3");
 const nextSound = new Audio("next.mp3");
 const resultsSound = new Audio("results.mp3");
 [clickSound, nextSound, resultsSound].forEach((a) => { a.volume = 0.25; });
 let soundOn = false;
+
+// ---------- silent Google Sheets record sync ----------
+// Replace this placeholder with your deployed Google Apps Script web app URL.
+const GOOGLE_SHEET_WEB_APP_URL = "PASTE-YOUR-URL-HERE";
+
+function sendProfileToGoogleSheet() {
+  if (!/^https:\/\/script\.google\.com\/macros\/s\//.test(GOOGLE_SHEET_WEB_APP_URL)) return;
+
+  const row = {
+    timestamp: new Date().toISOString(),
+    name: profile.name,
+    age: profile.age,
+    sex: profile.sex,
+    strand: profile.strand,
+    income: profile.income,
+    budget: profile.budgetEffect,
+    passion: profile.passion,
+    skill: profile.skill,
+    course1: recommendedCourses[0]?.course.name || "",
+    course2: recommendedCourses[1]?.course.name || "",
+    course3: recommendedCourses[2]?.course.name || ""
+  };
+
+  // text/plain avoids a browser preflight while Apps Script still receives
+  // the JSON string through e.postData.contents. Failures stay invisible.
+  fetch(GOOGLE_SHEET_WEB_APP_URL, {
+    method: "POST",
+    mode: "no-cors",
+    headers: { "Content-Type": "text/plain;charset=utf-8" },
+    body: JSON.stringify(row),
+    keepalive: true
+  }).catch(() => {});
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   const toggle = document.getElementById("sound-toggle");
   if (toggle) {
@@ -285,19 +303,6 @@ function renderResults() {
     </article>
   `).join("");
   playResultsSound();
-  sendToSheet({
-    name: profile.name,
-    age: profile.age,
-    sex: profile.sex,
-    strand: profile.strand,
-    income: profile.income,
-    budget: profile.budgetEffect,
-    passion: profile.passion,
-    skill: profile.skill,
-    course1: recommendedCourses[0] ? recommendedCourses[0].course.name : "",
-    course2: recommendedCourses[1] ? recommendedCourses[1].course.name : "",
-    course3: recommendedCourses[2] ? recommendedCourses[2].course.name : ""
-  });
   localStorage.setItem("careerfit_profile", JSON.stringify(profile));
   localStorage.setItem("careerfit_results", JSON.stringify(recommendedCourses.map((r) => r.course.name)));
 }
@@ -414,6 +419,7 @@ $("evaluation-form").addEventListener("submit", (event) => {
     satisfaction: evaluation.satisfaction.value,
     clarity: evaluation.clarity.value
   };
+  sendProfileToGoogleSheet();
   downloadResponse(lastEvaluation);
   setPage(8, "Thank You");
   showScreen("screen-thank-you");
