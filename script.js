@@ -7,7 +7,7 @@ let soundOn = false;
 
 // ---------- silent Google Sheets record sync ----------
 // Replace this placeholder with your deployed Google Apps Script web app URL.
-const GOOGLE_SHEET_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwakN5DTbzyyn5kzlvSs1E1qT8nLZolrQg4Lg97HOD1UWpoCG_dFwpFdPUQUiDhu3H3/exec";
+const GOOGLE_SHEET_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyJeu_v_ooZiY2Q1WznqhMKWxApVCMdHfBAAPHsZeykvsgthR3Uay385-xZS8Lo6Qhl/exec";
 
 function sendProfileToGoogleSheet() {
   if (!/^https:\/\/script\.google\.com\/macros\/s\//.test(GOOGLE_SHEET_WEB_APP_URL)) return;
