@@ -505,7 +505,6 @@ $("evaluation-form").addEventListener("submit", (event) => {
     likert: readLikert(evalItems)
   };
   sendProfileToGoogleSheet();
-  downloadResponse(lastEvaluation);
   setPage(13, "Thank You");
   showScreen("screen-thank-you");
 });
