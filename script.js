@@ -7,7 +7,7 @@ let soundOn = false;
 
 // ---------- silent Google Sheets record sync ----------
 // Replace this placeholder with your deployed Google Apps Script web app URL.
-const GOOGLE_SHEET_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyJeu_v_ooZiY2Q1WznqhMKWxApVCMdHfBAAPHsZeykvsgthR3Uay385-xZS8Lo6Qhl/exec";
+const GOOGLE_SHEET_WEB_APP_URL = "PASTE-YOUR-URL-HERE";
 
 function sendProfileToGoogleSheet() {
   if (!/^https:\/\/script\.google\.com\/macros\/s\//.test(GOOGLE_SHEET_WEB_APP_URL)) return;
@@ -18,13 +18,14 @@ function sendProfileToGoogleSheet() {
     age: profile.age,
     sex: profile.sex,
     strand: profile.strand,
-    income: profile.income,
+    income: INCOME_LABELS[profile.income],
     budget: profile.budgetEffect,
     passion: profile.passion,
     skill: profile.skill,
     course1: recommendedCourses[0]?.course.name || "",
     course2: recommendedCourses[1]?.course.name || "",
-    course3: recommendedCourses[2]?.course.name || ""
+    course3: recommendedCourses[2]?.course.name || "",
+    ...ivFlat()
   };
 
   // text/plain avoids a browser preflight while Apps Script still receives
@@ -203,7 +204,9 @@ const courses = [
 ];
 
 let currentPage = 1;
-let profile = {};
+const TOTAL_STEPS = 13;
+const INCOME_LABELS = { below: "Below ₱15,000", "15-30": "₱15,001–₱30,000", "30-50": "₱30,001–₱50,000", above: "₱50,001 and above" };
+let profile = { iv: {} };
 let recommendedCourses = [];
 let lastEvaluation = null;
 
@@ -219,8 +222,8 @@ function setPage(pageNumber, label) {
   if (currentPage && pageNumber > currentPage) playNextSound();
   currentPage = pageNumber;
   $("progress-wrap").style.display = pageNumber === 1 ? "none" : "block";
-  $("progress-fill").style.width = `${Math.min(100, ((pageNumber - 1) / 7) * 100)}%`;
-  $("progress-label").textContent = `Step ${pageNumber} of 8${label ? " · " + label : ""}`;
+  $("progress-fill").style.width = `${Math.min(100, ((pageNumber - 1) / (TOTAL_STEPS - 1)) * 100)}%`;
+  $("progress-label").textContent = `Step ${pageNumber} of ${TOTAL_STEPS}${label ? " · " + label : ""}`;
 }
 
 function setTheme(strand) {
@@ -262,7 +265,7 @@ function requireAnswer(name, messageId) {
 }
 
 function incomeLevel(income) {
-  return { below: 1, "10-20": 2, "20-40": 3, above: 4 }[income];
+  return { below: 1, "15-30": 2, "30-50": 3, above: 4 }[income];
 }
 
 function financialScore(course) {
@@ -300,6 +303,7 @@ function renderResults() {
       </div>
       <p>${result.course.description}</p>
       <ul>${result.reasons.map((reason) => `<li>${reason}</li>`).join("")}</ul>
+      ${resultDetails(result.course, index === 0)}
     </article>
   `).join("");
   playResultsSound();
@@ -313,21 +317,15 @@ function csvEscape(value) {
 }
 
 function downloadResponse(evaluation) {
-  const headers = [
-    "timestamp", "name", "age", "sex", "strand", "family_income",
-    "budget_effect", "passion", "skill", "course_1", "course_1_score",
-    "course_2", "course_2_score", "course_3", "course_3_score",
-    "evaluation_accuracy", "evaluation_satisfaction", "evaluation_clarity"
-  ];
-  const row = [
-    new Date().toISOString(), profile.name, profile.age, profile.sex, profile.strand,
-    profile.income, profile.budgetEffect, profile.passion, profile.skill,
-    recommendedCourses[0].course.name, recommendedCourses[0].total,
-    recommendedCourses[1].course.name, recommendedCourses[1].total,
-    recommendedCourses[2].course.name, recommendedCourses[2].total,
-    evaluation.accuracy, evaluation.satisfaction, evaluation.clarity
-  ];
-  const blob = new Blob([headers.join(",") + "\n" + row.map(csvEscape).join(",")], { type: "text/csv" });
+  const data = {
+    timestamp: new Date().toISOString(), name: profile.name, age: profile.age, sex: profile.sex,
+    strand: profile.strand, family_income: INCOME_LABELS[profile.income], budget_effect: profile.budgetEffect,
+    passion: profile.passion, skill: profile.skill
+  };
+  recommendedCourses.forEach((r, i) => { data[`course_${i + 1}`] = r.course.name; data[`course_${i + 1}_score`] = r.total; });
+  Object.assign(data, ivFlat());
+  const headers = Object.keys(data);
+  const blob = new Blob([headers.join(",") + "\n" + headers.map((k) => csvEscape(data[k])).join(",")], { type: "text/csv" });
   const link = document.createElement("a");
   link.href = URL.createObjectURL(blob);
   link.download = `careerfit-response-${Date.now()}.csv`;
@@ -336,7 +334,7 @@ function downloadResponse(evaluation) {
 }
 
 document.querySelectorAll("input[type='radio']").forEach((input) => {
-  input.addEventListener("change", () => input.closest(".option").classList.add("selected"));
+  input.addEventListener("change", () => input.closest(".option")?.classList.add("selected"));
 });
 
 $("btn-start").addEventListener("click", () => {
@@ -374,54 +372,140 @@ $("financial-form").addEventListener("submit", (event) => {
   }
   profile.income = income.value;
   profile.budgetEffect = budgetEffect.value;
-  setPage(4, "Personal Passion & Interest");
+  setPage(4, "Personal Interest, Skills, and Abilities");
   showScreen("screen-passion");
+});
+
+// ---------- Likert helpers (clickable circles, values 1 to 5 recorded, numbers not shown) ----------
+function sectionItems(sec) { return sec.items.map((text, i) => ({ id: sec.prefix + (i + 1), text, r: (sec.rev || []).includes(i) })); }
+function likertHTML(items) {
+  return items.map((it) => `
+    <div class="likert-item">
+      <p class="likert-text">${it.text}</p>
+      <div class="likert-row" role="radiogroup" aria-label="${it.text}">
+        ${LIKERT_LABELS.map((label, i) => `<label class="circle" title="${label}"><input type="radio" name="${it.id}" value="${i + 1}" aria-label="${label}"><span></span></label>`).join("")}
+      </div>
+      <div class="likert-ends"><span>${LIKERT_LABELS[0]}</span><span>${LIKERT_LABELS[4]}</span></div>
+    </div>`).join("");
+}
+function checkLikert(items, msgId) {
+  const left = items.filter((it) => !selected(it.id)).length;
+  $(msgId).textContent = left ? `Please answer every statement (${left} left).` : "";
+  return !left;
+}
+function readLikert(items) {
+  const out = {};
+  items.forEach((it) => { out[it.id] = Number(selected(it.id).value); });
+  return out;
+}
+function factorMean(items, answers) {
+  const v = items.map((it) => (it.r ? 6 - answers[it.id] : answers[it.id]));
+  return Number((v.reduce((x, y) => x + y, 0) / v.length).toFixed(2));
+}
+function ivFlat() {
+  const flat = {};
+  IV_SECTIONS.forEach((sec) => {
+    const a = profile.iv && profile.iv[sec.id];
+    if (a) { Object.assign(flat, a); flat[sec.id + "_mean"] = factorMean(sectionItems(sec), a); }
+  });
+  if (lastEvaluation) {
+    flat.evaluation_accuracy = lastEvaluation.accuracy;
+    flat.evaluation_satisfaction = lastEvaluation.satisfaction;
+    flat.evaluation_clarity = lastEvaluation.clarity;
+    Object.assign(flat, lastEvaluation.likert);
+    EVAL_SECTIONS.forEach((sec) => { flat[sec.id + "_mean"] = factorMean(sectionItems(sec), lastEvaluation.likert); });
+  }
+  return flat;
+}
+
+// ---------- Results extras: Bulacan schools, tuition note, scholarships, job outlook ----------
+function clusterOf(name) { const rule = CLUSTER_RULES.find(([re]) => re.test(name)); return rule ? rule[1] : "other"; }
+function tuitionNote(course) {
+  const range = course.cost === 1 ? "₱15,000 to ₱35,000" : "₱25,000 to ₱60,000";
+  return `State universities: free tuition for qualified students under RA 10931, though other fees may apply. Private schools: roughly ${range} per semester. Estimate only.`;
+}
+function resultDetails(course, open) {
+  const key = clusterOf(course.name);
+  const c = CLUSTERS[key];
+  const schools = SCHOOLS.filter((sc) => sc.c.includes(key)).slice(0, 5);
+  const list = (arr) => `<ul>${arr.map((x) => `<li>${x}</li>`).join("")}</ul>`;
+  return `<details class="more"${open ? " open" : ""}>
+    <summary>Schools, tuition, scholarships, and jobs</summary>
+    <h4>Schools in Bulacan</h4>${schools.length ? list(schools.map((sc) => `${sc.n} (${sc.w}, ${sc.t})`)) : "<p>Ask your guidance counselor for schools that offer this course.</p>"}
+    <h4>Estimated tuition</h4><p>${tuitionNote(course)}</p>
+    <h4>Scholarships</h4>${list([...BASE_SCHOLARSHIPS, ...(c.grants || [])])}
+    <h4>Job outlook</h4><p>${c.outlook}</p><p><strong>Possible careers:</strong> ${c.jobs}</p>
+  </details>`;
+}
+
+// ---------- Part II: Factors 2 to 7 (pages 5 to 10) ----------
+const interestItems = sectionItems(IV_SECTIONS[0]);
+$("likert-interest").innerHTML = likertHTML(interestItems);
+IV_SECTIONS.slice(1).forEach((sec, k) => {
+  const n = k + 2, items = sectionItems(sec), last = n === IV_SECTIONS.length;
+  const el = document.createElement("section");
+  el.className = "screen"; el.id = `screen-iv-${n}`;
+  el.innerHTML = `
+    <p class="eyebrow">Page ${n + 3} · Part II · Factor ${n} of 7</p>
+    <h2>${sec.title}</h2>
+    <p class="intro-text">${sec.intro}</p>
+    <p class="source-note">${sec.cite}</p>
+    <form id="form-iv-${n}" novalidate>
+      ${likertHTML(items)}
+      <p class="form-message" id="msg-iv-${n}"></p>
+      <button class="primary-button" type="submit">${last ? "See My Courses <span>✨</span>" : "Next <span>→</span>"}</button>
+    </form>`;
+  $("screen-loading").before(el);
+  $(`form-iv-${n}`).addEventListener("submit", (event) => {
+    event.preventDefault();
+    if (!checkLikert(items, `msg-iv-${n}`)) return;
+    profile.iv[sec.id] = readLikert(items);
+    if (last) {
+      setPage(11, "Your Recommendations");
+      showScreen("screen-loading");
+      setTimeout(() => { renderResults(); showScreen("screen-results"); }, 900);
+    } else {
+      setPage(n + 4, IV_SECTIONS[n].title);
+      showScreen(`screen-iv-${n + 1}`);
+    }
+  });
 });
 
 $("passion-form").addEventListener("submit", (event) => {
   event.preventDefault();
-  if (!requireAnswer("passion", "passion-message")) return;
+  if (!requireAnswer("passion", "passion-message") || !requireAnswer("skill", "passion-message") || !checkLikert(interestItems, "passion-message")) return;
   profile.passion = selected("passion").value;
-  setPage(5, "Skills & Abilities");
-  showScreen("screen-skills");
-});
-
-$("skills-form").addEventListener("submit", (event) => {
-  event.preventDefault();
-  if (!requireAnswer("skill", "skills-message")) return;
   profile.skill = selected("skill").value;
-  setPage(6, "Your Recommendations");
-  showScreen("screen-loading");
-  setTimeout(() => {
-    renderResults();
-    showScreen("screen-results");
-  }, 900);
+  profile.iv.interest = readLikert(interestItems);
+  setPage(5, IV_SECTIONS[1].title);
+  showScreen("screen-iv-2");
 });
 
 $("btn-evaluation").addEventListener("click", () => {
-  setPage(7, "System Evaluation");
+  setPage(12, "System Evaluation");
   showScreen("screen-evaluation");
 });
 
+EVAL_SECTIONS.forEach((sec) => { $("likert-" + sec.id).innerHTML = likertHTML(sectionItems(sec)); });
+const evalItems = EVAL_SECTIONS.flatMap(sectionItems);
+
 $("evaluation-form").addEventListener("submit", (event) => {
   event.preventDefault();
-  const evaluation = {
-    accuracy: selected("accuracy"),
-    satisfaction: selected("satisfaction"),
-    clarity: selected("clarity")
-  };
+  const evaluation = { accuracy: selected("accuracy"), satisfaction: selected("satisfaction"), clarity: selected("clarity") };
   if (!evaluation.accuracy || !evaluation.satisfaction || !evaluation.clarity) {
-    $("evaluation-message").textContent = "Please answer all three evaluation questions.";
+    $("evaluation-message").textContent = "Please answer all three Yes/No style questions.";
     return;
   }
+  if (!checkLikert(evalItems, "evaluation-message")) return;
   lastEvaluation = {
     accuracy: evaluation.accuracy.value,
     satisfaction: evaluation.satisfaction.value,
-    clarity: evaluation.clarity.value
+    clarity: evaluation.clarity.value,
+    likert: readLikert(evalItems)
   };
   sendProfileToGoogleSheet();
   downloadResponse(lastEvaluation);
-  setPage(8, "Thank You");
+  setPage(13, "Thank You");
   showScreen("screen-thank-you");
 });
 
@@ -430,7 +514,7 @@ $("btn-download").addEventListener("click", () => {
 });
 
 $("btn-restart").addEventListener("click", () => {
-  profile = {};
+  profile = { iv: {} };
   recommendedCourses = [];
   lastEvaluation = null;
   document.querySelectorAll("form").forEach((form) => form.reset());
