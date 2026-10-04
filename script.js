@@ -2,12 +2,13 @@
 const clickSound = new Audio("click.mp3");
 const nextSound = new Audio("next.mp3");
 const resultsSound = new Audio("results.mp3");
-[clickSound, nextSound, resultsSound].forEach((a) => { a.volume = 0.25; });
+const circleSound = new Audio("circle-click.mp3");
+[clickSound, nextSound, resultsSound, circleSound].forEach((a) => { a.volume = 0.25; });
 let soundOn = false;
 
 // ---------- silent Google Sheets record sync ----------
 // Replace this placeholder with your deployed Google Apps Script web app URL.
-const GOOGLE_SHEET_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyJeu_v_ooZiY2Q1WznqhMKWxApVCMdHfBAAPHsZeykvsgthR3Uay385-xZS8Lo6Qhl/exec";
+const GOOGLE_SHEET_WEB_APP_URL = "PASTE-YOUR-URL-HERE";
 
 function sendProfileToGoogleSheet() {
   if (!/^https:\/\/script\.google\.com\/macros\/s\//.test(GOOGLE_SHEET_WEB_APP_URL)) return;
@@ -19,7 +20,6 @@ function sendProfileToGoogleSheet() {
     sex: profile.sex,
     strand: profile.strand,
     income: INCOME_LABELS[profile.income],
-    budget: profile.budgetEffect,
     passion: profile.passion,
     skill: profile.skill,
     course1: recommendedCourses[0]?.course.name || "",
@@ -53,6 +53,11 @@ function playClickSound() {
   clickSound.currentTime = 0;
   clickSound.play().catch(() => {}); // ignore autoplay-block errors
 }
+function playCircleSound() {
+  if (!soundOn) return;
+  circleSound.currentTime = 0;
+  circleSound.play().catch(() => {});
+}
 function playNextSound() {
   if (!soundOn) return;
   nextSound.currentTime = 0;
@@ -66,6 +71,8 @@ function playResultsSound() {
 document.addEventListener("change", (event) => {
   if (event.target.matches('.option input[type="radio"]')) {
     playClickSound();
+  } else if (event.target.matches('.circle input[type="radio"]')) {
+    playCircleSound();
   }
 });
 
@@ -205,7 +212,7 @@ const courses = [
 
 let currentPage = 1;
 const TOTAL_STEPS = 13;
-const INCOME_LABELS = { below: "Below ₱15,000", "15-30": "₱15,001–₱30,000", "30-50": "₱30,001–₱50,000", above: "₱50,001 and above" };
+const INCOME_LABELS = { below: "Below ₱15,000", "15-30": "₱15,001 – ₱30,000", "30-50": "₱30,001 – ₱50,000", above: "₱50,001 and above" };
 let profile = { iv: {} };
 let recommendedCourses = [];
 let lastEvaluation = null;
@@ -270,11 +277,7 @@ function incomeLevel(income) {
 
 function financialScore(course) {
   const budget = incomeLevel(profile.income);
-  let score = Math.max(25, 100 - (course.cost - budget) * 22);
-  if (profile.budgetEffect === "no-limit") score = 100;
-  if (profile.budgetEffect === "affordable" && course.cost === 3) score -= 15;
-  if (profile.budgetEffect === "budget" && course.cost > 1) score -= 20;
-  if (profile.budgetEffect === "tuition" && course.cost > 1) score -= 30;
+  const score = Math.max(25, 100 - (course.cost - budget) * 22);
   return Math.max(20, Math.min(100, score));
 }
 
@@ -319,7 +322,7 @@ function csvEscape(value) {
 function downloadResponse(evaluation) {
   const data = {
     timestamp: new Date().toISOString(), name: profile.name, age: profile.age, sex: profile.sex,
-    strand: profile.strand, family_income: INCOME_LABELS[profile.income], budget_effect: profile.budgetEffect,
+    strand: profile.strand, family_income: INCOME_LABELS[profile.income],
     passion: profile.passion, skill: profile.skill
   };
   recommendedCourses.forEach((r, i) => { data[`course_${i + 1}`] = r.course.name; data[`course_${i + 1}_score`] = r.total; });
@@ -365,13 +368,11 @@ $("basic-form").addEventListener("submit", (event) => {
 $("financial-form").addEventListener("submit", (event) => {
   event.preventDefault();
   const income = selected("income");
-  const budgetEffect = selected("budget-effect");
-  if (!income || !budgetEffect) {
-    $("financial-message").textContent = "Please answer both financial questions.";
+  if (!income) {
+    $("financial-message").textContent = "Please choose your family monthly income.";
     return;
   }
   profile.income = income.value;
-  profile.budgetEffect = budgetEffect.value;
   setPage(4, "Personal Interest, Skills, and Abilities");
   showScreen("screen-passion");
 });
@@ -382,7 +383,7 @@ function likertHTML(items) {
   return items.map((it) => `
     <div class="likert-item">
       <p class="likert-text">${it.text}</p>
-      <div class="likert-row" role="radiogroup" aria-label="${it.text}">
+      <div class="likert-row" role="radiogroup" aria-label="${it.text.replace(/"/g, '&quot;')}">
         ${LIKERT_LABELS.map((label, i) => `<label class="circle" title="${label}"><input type="radio" name="${it.id}" value="${i + 1}" aria-label="${label}"><span></span></label>`).join("")}
       </div>
       <div class="likert-ends"><span>${LIKERT_LABELS[0]}</span><span>${LIKERT_LABELS[4]}</span></div>
