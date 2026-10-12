@@ -8,7 +8,7 @@ let soundOn = false;
 
 // ---------- silent Google Sheets record sync ----------
 // Replace this placeholder with your deployed Google Apps Script web app URL.
-const GOOGLE_SHEET_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyJeu_v_ooZiY2Q1WznqhMKWxApVCMdHfBAAPHsZeykvsgthR3Uay385-xZS8Lo6Qhl/exec";
+const GOOGLE_SHEET_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbw-9WFis9qoADLqQu87UUHupWe7gDRgupM7IJTdSQ__DYSO2_Lzmf18VlaQxKIc6msk/exec";
 
 // One id per respondent so every autosave updates the SAME row in the sheet.
 function newSessionId() {
