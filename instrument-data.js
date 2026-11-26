@@ -108,13 +108,13 @@ const EVAL_SECTIONS = [
 
 // Results page data. Estimates only: verify before publication.
 const SCHOOLS = [
-  { n: "Bulacan State University", w: "Malolos and other campuses", t: "public", c: ["built", "it", "sci", "biz", "arts", "social", "crim"] },
-  { n: "Bulacan Polytechnic College", w: "Malolos", t: "public", c: ["it", "biz"] },
-  { n: "Bulacan Agricultural State College", w: "San Ildefonso", t: "public", c: ["agri", "sci", "biz", "it"] },
-  { n: "Baliuag University", w: "Baliuag", t: "private", c: ["it", "biz", "sci", "social"] },
-  { n: "La Consolacion University Philippines", w: "Malolos", t: "private", c: ["it", "biz", "arts", "social", "crim"] },
-  { n: "Centro Escolar University Malolos", w: "Malolos", t: "private", c: ["biz", "it", "sci"] },
-  { n: "Meycauayan College", w: "Meycauayan", t: "private", c: ["biz", "it", "crim"] },
+  { n: "Bulacan State University", w: "Malolos and other campuses", t: "public", c: ["edu", "built", "it", "sci", "biz", "arts", "social", "crim"] },
+  { n: "Bulacan Polytechnic College", w: "Malolos", t: "public", c: ["edu", "it", "biz"] },
+  { n: "Bulacan Agricultural State College", w: "San Ildefonso", t: "public", c: ["edu", "agri", "sci", "biz", "it"] },
+  { n: "Baliuag University", w: "Baliuag", t: "private", c: ["edu", "it", "biz", "sci", "social"] },
+  { n: "La Consolacion University Philippines", w: "Malolos", t: "private", c: ["edu", "it", "biz", "arts", "social", "crim"] },
+  { n: "Centro Escolar University Malolos", w: "Malolos", t: "private", c: ["edu", "biz", "it", "sci"] },
+  { n: "Meycauayan College", w: "Meycauayan", t: "private", c: ["edu", "biz", "it", "crim"] },
   { n: "STI College", w: "Malolos and Meycauayan", t: "private", c: ["it", "biz"] }
 ];
 const BASE_SCHOLARSHIPS = [
@@ -125,7 +125,7 @@ const BASE_SCHOLARSHIPS = [
   "School-based academic and athletic discounts"];
 const DOST_GRANT = "DOST-SEI Undergraduate Scholarship for priority science, technology, engineering, and math courses";
 const CLUSTER_RULES = [
-  [/Criminology/, "crim"], [/Architecture|Interior Design/, "built"], [/Agri|Forestry|Fisheries/, "agri"],
+  [/BSEd|Education/, "edu"], [/Criminology/, "crim"], [/Architecture|Interior Design/, "built"], [/Agri|Forestry|Fisheries/, "agri"],
   [/Information|Computer Science/, "it"], [/Accountancy|Accounting|Economics/, "biz"],
   [/BFA|English|Linguistics|Literature|Filipino/, "arts"],
   [/Psychology|Political|Anthropology|Sociology|History|Philosophy|Islamic/, "social"],
@@ -138,6 +138,7 @@ const CLUSTERS = {
   biz: { outlook: "Steady demand in banks, firms, government, and startups. Accountancy leads to the CPA licensure exam.", jobs: "Accountant, auditor, economist, business analyst, financial staff, entrepreneur" },
   arts: { outlook: "Moderate demand in media, advertising, publishing, and creative industries. Portfolio and experience matter.", jobs: "Writer, editor, translator, artist, designer, content creator" },
   social: { outlook: "Steady demand in schools, NGOs, government offices, and community programs. Some programs have licensure exams.", jobs: "Psychometrician or counselor staff, researcher, policy staff, community development worker, museum or heritage staff" },
+  edu: { outlook: "Consistent demand for teachers in public and private schools. A teacher licensure exam is required.", jobs: "Mathematics teacher, physics teacher, tutor, school staff, learning-material developer", grants: ["Teacher education scholarships and grants (check CHED and DepEd announcements each year)"] },
   crim: { outlook: "Steady demand in law enforcement, security, corrections, and investigation. Criminology leads to a licensure exam.", jobs: "Police officer, investigator, security officer, jail officer, forensic staff" },
   other: { outlook: "Demand depends on the field and location. Ask your guidance counselor for current job trends.", jobs: "Ask your guidance counselor or the school's admissions office" }
 };

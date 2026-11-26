@@ -215,6 +215,8 @@ const courses = [
   { name: "BS Architecture", strands: ["STEM"], cost: 2, passions: ["Math & Engineering", "Technology & Innovation"], skills: ["General Physics", "Capstone Research"], description: "Design buildings and spaces for people and communities." },
   { name: "B Landscape Architecture", strands: ["STEM"], cost: 2, passions: ["Math & Engineering", "Science & Research"], skills: ["General Physics", "Capstone Research"], description: "Plan and design outdoor environments and landscapes." },
   { name: "BS Interior Design", strands: ["STEM", "Home Economics"], cost: 2, passions: ["Math & Engineering", "Technology & Innovation", "Housekeeping & Hospitality", "Home Management & Caregiving"], skills: ["General Physics", "Capstone Research", "Housekeeping", "Work Immersion"], description: "Plan and design comfortable and attractive indoor spaces." },
+  { name: "BSEd Major in Mathematics", strands: ["STEM"], cost: 1, passions: ["Math & Engineering", "Science & Research"], skills: ["General Physics", "Capstone Research"], description: "Become a mathematics teacher in junior and senior high school." },
+  { name: "BSEd Major in Physics", strands: ["STEM"], cost: 1, passions: ["Science & Research", "Math & Engineering"], skills: ["General Physics", "Capstone Research"], description: "Become a physics teacher and help students understand how the world works." },
   { name: "BS Accountancy", strands: ["ABM"], cost: 2, passions: ["Finance & Accounting", "Economics & Management"], skills: ["Fundamentals of Accountancy, Business & Management", "Business Finance"], description: "Work with financial records, reports, and decisions." },
   { name: "BS Accounting Technology", strands: ["ABM", "Home Economics"], cost: 1, passions: ["Finance & Accounting", "Economics & Management", "Home Management & Caregiving"], skills: ["Fundamentals of Accountancy, Business & Management", "Business Finance", "Work Immersion"], description: "Handle accounting records and systems for businesses." },
 ];
@@ -321,13 +323,17 @@ function makeRecommendations() {
     possibleCourses = possibleCourses.filter((course) => isTechCourse(course) === wantsTech);
   }
   const ranked = possibleCourses.map(scoreCourse).sort((a, b) => b.total - a.total);
-  const top = ranked.slice(0, 3);
-  // STEM students leaning to engineering, design, or technology should receive the Architecture course
-  if (isSTEM && !wantsTech && ["Math & Engineering", "Technology & Innovation"].includes(profile.passion) &&
-      !top.some((r) => r.course.name === "BS Architecture")) {
-    const arch = ranked.find((r) => r.course.name === "BS Architecture");
-    if (arch) { top[top.length - 1] = arch; top.sort((x, y) => y.total - x.total); }
-  }
+  if (!(isSTEM && !wantsTech)) return ranked.slice(0, 3);
+  // STEM mix: Architecture for engineering, design, or technology interest; a math or physics teacher course as the 3rd suggestion
+  const pick = (name) => ranked.find((r) => r.course.name === name);
+  const arch = ["Math & Engineering", "Technology & Innovation"].includes(profile.passion) ? pick("BS Architecture") : null;
+  const teacherName = profile.skill === "General Physics" ? "BSEd Major in Physics" : (profile.passion === "Math & Engineering" ? "BSEd Major in Mathematics" : null);
+  const teacher = teacherName ? pick(teacherName) : null;
+  const fixed = [arch, teacher].filter(Boolean);
+  const top = ranked.filter((r) => !fixed.includes(r)).slice(0, 3 - fixed.length);
+  if (arch) top.push(arch);
+  top.sort((x, y) => y.total - x.total);
+  if (teacher) top.push(teacher);
   return top;
 }
 
