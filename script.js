@@ -203,9 +203,9 @@ const courses = [
   { name: "BS Physics", strands: ["STEM"], cost: 1, passions: ["Science & Research", "Math & Engineering"], skills: ["General Physics", "Capstone Research"], description: "Study matter, energy, and the laws of nature." },
   { name: "BS Applied Physics", strands: ["STEM"], cost: 2, passions: ["Math & Engineering", "Science & Research", "Technology & Innovation"], skills: ["General Physics", "Capstone Research"], description: "Use physics to solve problems in technology and industry." },
   { name: "BS Chemistry", strands: ["STEM"], cost: 2, passions: ["Science & Research", "Health & Medicine"], skills: ["General Chemistry", "Capstone Research"], description: "Study substances, reactions, and materials in the laboratory." },
-  { name: "BS Computer Science", strands: ["STEM", "ICT"], cost: 1, passions: ["Programming & Software", "Computer Systems & Servicing", "Technology & Innovation"], skills: ["Java Programming", "Computer Systems Servicing"], description: "Learn programming, algorithms, and how software works." },
-  { name: "BS Information Technology", strands: ["STEM", "ICT"], cost: 1, passions: ["Programming & Software", "Computer Systems & Servicing", "Digital Media & Technology", "Technology & Innovation"], skills: ["Java Programming", "Computer Systems Servicing", "Work Immersion"], description: "Build, manage, and support computer systems and applications." },
-  { name: "BS Information Systems", strands: ["STEM", "ICT"], cost: 1, passions: ["Programming & Software", "Digital Media & Technology", "Technology & Innovation"], skills: ["Java Programming", "Work Immersion"], description: "Connect technology with business needs and information management." },
+  { name: "BS Computer Science", strands: ["STEM", "ICT"], cost: 1, passions: ["Programming & Software", "Computer Systems & Servicing", "Technology & Innovation"], skills: ["Java Programming", "Computer Systems Servicing", "General Physics", "Capstone Research"], description: "Learn programming, algorithms, and how software works." },
+  { name: "BS Information Technology", strands: ["STEM", "ICT"], cost: 1, passions: ["Programming & Software", "Computer Systems & Servicing", "Digital Media & Technology", "Technology & Innovation"], skills: ["Java Programming", "Computer Systems Servicing", "Work Immersion", "Capstone Research"], description: "Build, manage, and support computer systems and applications." },
+  { name: "BS Information Systems", strands: ["STEM", "ICT"], cost: 1, passions: ["Programming & Software", "Digital Media & Technology", "Technology & Innovation"], skills: ["Java Programming", "Work Immersion", "Capstone Research"], description: "Connect technology with business needs and information management." },
   { name: "BS Mathematics", strands: ["STEM"], cost: 1, passions: ["Math & Engineering", "Science & Research"], skills: ["General Physics", "Capstone Research"], description: "Study numbers, patterns, and logical reasoning." },
   { name: "BS Applied Mathematics", strands: ["STEM"], cost: 1, passions: ["Math & Engineering", "Science & Research", "Technology & Innovation"], skills: ["General Physics", "Capstone Research"], description: "Use mathematics to solve real problems in science and industry." },
   { name: "BS Statistics", strands: ["STEM", "ABM"], cost: 1, passions: ["Math & Engineering", "Science & Research", "Economics & Management", "Finance & Accounting"], skills: ["Capstone Research", "Applied Economics", "Business Finance"], description: "Collect and analyze data to support decisions." },
@@ -298,25 +298,52 @@ function isTechCourse(course) {
   return course.strands.includes("ICT") || /^BIT /.test(course.name);
 }
 
+function scoreCourse(course) {
+  const financial = financialScore(course);
+  const passion = course.passions.includes(profile.passion) ? 100 : 35;
+  const skills = course.skills.includes(profile.skill) ? 100 : 35;
+  const total = Math.round(financial * 0.30 + passion * 0.35 + skills * 0.35);
+  const reasons = [];
+  reasons.push(course.passions.includes(profile.passion) ? "matches your passion" : "offers a related interest area");
+  reasons.push(course.skills.includes(profile.skill) ? "matches your strongest skill" : "can develop your selected skill");
+  reasons.push(financial >= 70 ? "fits your budget preference" : "needs careful tuition planning");
+  return { course, total, reasons };
+}
+
 function makeRecommendations() {
   let possibleCourses = courses.filter((course) => course.strands.includes(profile.strand));
-  if (profile.strand === "STEM") {
+  const isSTEM = profile.strand === "STEM";
+  let wantsTech = false;
+  if (isSTEM) {
     // STEM students see IT courses only when they chose Technology & Innovation (and not General Physics).
     // Otherwise they see science and engineering courses only.
-    const wantsTech = profile.passion === "Technology & Innovation" && profile.skill !== "General Physics";
+    wantsTech = profile.passion === "Technology & Innovation" && profile.skill !== "General Physics";
     possibleCourses = possibleCourses.filter((course) => isTechCourse(course) === wantsTech);
   }
-  return possibleCourses.map((course) => {
-    const financial = financialScore(course);
-    const passion = course.passions.includes(profile.passion) ? 100 : 35;
-    const skills = course.skills.includes(profile.skill) ? 100 : 35;
-    const total = Math.round(financial * 0.30 + passion * 0.35 + skills * 0.35);
-    const reasons = [];
-    reasons.push(course.passions.includes(profile.passion) ? "matches your passion" : "offers a related interest area");
-    reasons.push(course.skills.includes(profile.skill) ? "matches your strongest skill" : "can develop your selected skill");
-    reasons.push(financial >= 70 ? "fits your budget preference" : "needs careful tuition planning");
-    return { course, total, reasons };
-  }).sort((a, b) => b.total - a.total).slice(0, 3);
+  const ranked = possibleCourses.map(scoreCourse).sort((a, b) => b.total - a.total);
+  const top = ranked.slice(0, 3);
+  // STEM students leaning to engineering, design, or technology should receive the Architecture course
+  if (isSTEM && !wantsTech && ["Math & Engineering", "Technology & Innovation"].includes(profile.passion) &&
+      !top.some((r) => r.course.name === "BS Architecture")) {
+    const arch = ranked.find((r) => r.course.name === "BS Architecture");
+    if (arch) { top[top.length - 1] = arch; top.sort((x, y) => y.total - x.total); }
+  }
+  return top;
+}
+
+// STEM students who chose Technology & Innovation: how well IT courses fit their interest and abilities (income not included)
+let lastITFit = null;
+function itFitForSTEM() {
+  if (profile.strand !== "STEM" || profile.passion !== "Technology & Innovation") return null;
+  const list = courses
+    .filter((course) => course.strands.includes("STEM") && isTechCourse(course))
+    .map((course) => ({
+      course,
+      percent: Math.round((course.passions.includes(profile.passion) ? 100 : 35) * 0.5 + (course.skills.includes(profile.skill) ? 100 : 35) * 0.5)
+    }))
+    .sort((a, b) => b.percent - a.percent)
+    .slice(0, 3);
+  return list.length ? { percent: list[0].percent, list } : null;
 }
 
 function renderResults() {
@@ -332,6 +359,17 @@ function renderResults() {
       ${resultDetails(result.course, index === 0)}
     </article>
   `).join("");
+  lastITFit = itFitForSTEM();
+  const showList = lastITFit && !recommendedCourses.every((r) => isTechCourse(r.course));
+  $("results-it").innerHTML = lastITFit ? `
+    <article class="result-card it-fit">
+      <div class="result-top">
+        <h3>IT Course Fit</h3>
+        <span class="score">${lastITFit.percent}% fit</span>
+      </div>
+      <p>Based on your interest in technology and your ${profile.skill} ability, IT courses fit you at ${lastITFit.percent}%. This uses your interest and abilities only, not your income.</p>
+      ${showList ? `<ul>${lastITFit.list.map((x) => `<li>${x.course.name}: ${x.percent}% fit</li>`).join("")}</ul>` : ""}
+    </article>` : "";
   playResultsSound();
   localStorage.setItem("careerfit_profile", JSON.stringify(profile));
   localStorage.setItem("careerfit_results", JSON.stringify(recommendedCourses.map((r) => r.course.name)));
@@ -428,6 +466,7 @@ function factorMean(items, answers) {
 }
 function ivFlat() {
   const flat = {};
+  if (lastITFit) flat.it_fit_percent = lastITFit.percent;
   IV_SECTIONS.forEach((sec) => {
     const a = profile.iv && profile.iv[sec.id];
     if (a) { Object.assign(flat, a); flat[sec.id + "_mean"] = factorMean(sectionItems(sec), a); }

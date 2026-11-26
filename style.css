@@ -171,3 +171,5 @@ footer { padding: 18px; text-align: center; color: var(--muted); font-size: 0.78
 .more h4 { margin: 14px 0 4px; font-size: 0.95rem; }
 .more p { margin: 4px 0; }
 .more ul { margin: 4px 0 0; padding-left: 20px; }
+
+.it-fit { border-left: 6px solid var(--accent); }
