@@ -582,5 +582,4 @@ $("btn-restart").addEventListener("click", () => {
 });
 
 setBackground("welcome", "default");
-if (!selected("strand")) applyStrandColor(null); // homepage = light purple until a strand is chosen
 setPage(1);
