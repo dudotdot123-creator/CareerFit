@@ -140,85 +140,96 @@ const strandInfo = {
     icon: "🔬",
     theme: "stem",
     bg: "stem",
-    passions: ["Science & Research", "Math & Engineering", "Health & Medicine", "Technology & Innovation"],
-    skills: ["General Chemistry", "General Physics", "Capstone Research"]
+    passions: ["Healthcare & Medical Sciences", "Engineering & Architecture", "Science & Environment", "Technology & Innovation"],
+    skills: ["Biology & Health Sciences", "Mathematics & Physical Sciences", "Engineering & Design", "Research & Analysis"]
   },
   ABM: {
     icon: "💰",
     theme: "abm",
     bg: "abm",
-    passions: ["Business & Entrepreneurship", "Finance & Accounting", "Marketing & Sales", "Economics & Management"],
-    skills: ["Fundamentals of Accountancy, Business & Management", "Applied Economics", "Business Finance", "Business Ethics", "Business Simulation"]
+    passions: ["Business & Entrepreneurship", "Finance & Accounting", "Marketing & Management", "Economics & Analysis"],
+    skills: ["Accounting & Finance", "Economics & Management", "Business Planning", "Communication & Organization"]
   },
   HUMSS: {
     icon: "📚",
     theme: "humss",
     bg: "humss",
-    passions: ["Writing & Creative Works", "Social Sciences & Culture", "Politics & Public Service", "Community & Social Development"],
-    skills: ["Creative Nonfiction", "Introduction to World Religions & Belief Systems", "Philippine Politics & Governance", "Community Engagement, Solidarity & Citizenship", "Culminating Activity"]
+    passions: ["Law & Public Service", "Communication & Media", "Psychology & Social Work", "Arts, Culture & Education"],
+    skills: ["Language & Writing", "Social Sciences & History", "Critical Thinking & Logic", "People & Communication Skills"]
   },
   ICT: {
     icon: "💻",
     theme: "ict",
     bg: "ict",
-    passions: ["Programming & Software", "Graphic Design & Animation", "Computer Systems & Servicing", "Digital Media & Technology"],
-    skills: ["Java Programming", "Visual Graphic Design", "Animation", "Computer Systems Servicing", "Work Immersion"]
+    passions: ["Programming & Software", "Digital Media & Animation", "Data & Technology Systems", "Engineering Tech & Robotics"],
+    skills: ["Coding & Programming", "Computer Systems", "Digital & Graphic Design", "Technical Problem Solving"]
   },
   "Home Economics": {
     icon: "🏠",
     theme: "home-economics",
     bg: "home-economics",
-    passions: ["Bread & Pastry Production", "Housekeeping & Hospitality", "Culinary & Food Services", "Home Management & Caregiving"],
-    skills: ["Housekeeping", "Bread and Pastry Production", "Work Immersion"]
+    passions: ["Culinary & Food Science", "Fashion & Design", "Hospitality & Tourism", "Home Management & Livelihood"],
+    skills: ["Food Preparation & Safety", "Design & Handicrafts", "Resource Management", "Care & Hospitality Services"]
   }
 };
 
+// Course database, grouped by strand. A course only appears for the strands listed in `strands`.
+// `passions` (Q7) and `skills` (Q8) are ordered from best fit to weaker fit; the order breaks ties.
+// A course shared by two strands (Hospitality Management, Food Technology, Entrepreneurship) lists the
+// Q7/Q8 labels of both strands, because every strand uses its own distinct labels.
 const courses = [
-  { name: "AB History", strands: ["HUMSS"], cost: 1, passions: ["Social Sciences & Culture", "Writing & Creative Works"], skills: ["Creative Nonfiction", "Introduction to World Religions & Belief Systems", "Culminating Activity"], description: "Study the past to understand people, culture, and society." },
-  { name: "AB Philosophy", strands: ["HUMSS"], cost: 1, passions: ["Social Sciences & Culture", "Writing & Creative Works"], skills: ["Introduction to World Religions & Belief Systems", "Creative Nonfiction"], description: "Explore ideas about knowledge, ethics, and how people live." },
-  { name: "BFA Industrial Design", strands: ["ICT", "HUMSS", "Home Economics"], cost: 2, passions: ["Graphic Design & Animation", "Writing & Creative Works", "Home Management & Caregiving"], skills: ["Visual Graphic Design", "Creative Nonfiction", "Work Immersion"], description: "Design everyday products that are useful and well made." },
-  { name: "BFA Painting", strands: ["ICT", "HUMSS"], cost: 2, passions: ["Graphic Design & Animation", "Writing & Creative Works"], skills: ["Visual Graphic Design", "Creative Nonfiction"], description: "Create original paintings and develop your artistic voice." },
-  { name: "BFA Sculpture", strands: ["ICT", "HUMSS"], cost: 2, passions: ["Graphic Design & Animation", "Writing & Creative Works"], skills: ["Visual Graphic Design", "Creative Nonfiction"], description: "Shape three-dimensional art from different materials." },
-  { name: "BFA Visual Communication", strands: ["ICT", "HUMSS"], cost: 2, passions: ["Graphic Design & Animation", "Digital Media & Technology", "Writing & Creative Works"], skills: ["Visual Graphic Design", "Animation", "Creative Nonfiction"], description: "Create visual concepts, artwork, and communication designs." },
-  { name: "AB Economics", strands: ["HUMSS", "ABM"], cost: 1, passions: ["Economics & Management", "Social Sciences & Culture", "Politics & Public Service"], skills: ["Applied Economics", "Philippine Politics & Governance"], description: "Study how people, businesses, and governments use resources." },
-  { name: "BS Economics", strands: ["ABM", "HUMSS"], cost: 1, passions: ["Economics & Management", "Finance & Accounting", "Business & Entrepreneurship"], skills: ["Applied Economics", "Business Finance"], description: "Analyze markets, money, and policies using data and theory." },
-  { name: "AB Psychology", strands: ["HUMSS"], cost: 1, passions: ["Social Sciences & Culture", "Community & Social Development"], skills: ["Community Engagement, Solidarity & Citizenship", "Introduction to World Religions & Belief Systems", "Culminating Activity"], description: "Understand human behavior, thinking, and feelings." },
-  { name: "BS Psychology", strands: ["HUMSS", "Home Economics"], cost: 1, passions: ["Social Sciences & Culture", "Community & Social Development", "Home Management & Caregiving"], skills: ["Community Engagement, Solidarity & Citizenship", "Culminating Activity", "Work Immersion"], description: "Study behavior and mental processes using science and research." },
-  { name: "BS Criminology", strands: ["HUMSS"], cost: 1, passions: ["Politics & Public Service", "Community & Social Development"], skills: ["Philippine Politics & Governance", "Community Engagement, Solidarity & Citizenship"], description: "Study crime, justice, and community safety." },
-  { name: "AB Political Science", strands: ["HUMSS"], cost: 1, passions: ["Politics & Public Service", "Social Sciences & Culture"], skills: ["Philippine Politics & Governance", "Culminating Activity"], description: "Study government, politics, and public policy." },
-  { name: "AB English", strands: ["HUMSS"], cost: 1, passions: ["Writing & Creative Works", "Social Sciences & Culture"], skills: ["Creative Nonfiction", "Culminating Activity"], description: "Study the English language, communication, and writing." },
-  { name: "AB Linguistics", strands: ["HUMSS"], cost: 1, passions: ["Writing & Creative Works", "Social Sciences & Culture"], skills: ["Creative Nonfiction", "Culminating Activity"], description: "Study how language works and how people use it." },
-  { name: "AB Literature", strands: ["HUMSS"], cost: 1, passions: ["Writing & Creative Works", "Social Sciences & Culture"], skills: ["Creative Nonfiction", "Culminating Activity"], description: "Read, analyze, and write about literary works." },
-  { name: "AB Anthropology", strands: ["HUMSS"], cost: 1, passions: ["Social Sciences & Culture", "Community & Social Development"], skills: ["Community Engagement, Solidarity & Citizenship", "Introduction to World Religions & Belief Systems"], description: "Study people, cultures, and how societies change." },
-  { name: "AB Sociology", strands: ["HUMSS"], cost: 1, passions: ["Social Sciences & Culture", "Community & Social Development"], skills: ["Community Engagement, Solidarity & Citizenship", "Introduction to World Religions & Belief Systems", "Culminating Activity"], description: "Study groups, communities, and social change." },
-  { name: "AB Filipino", strands: ["HUMSS"], cost: 1, passions: ["Writing & Creative Works", "Social Sciences & Culture"], skills: ["Creative Nonfiction", "Culminating Activity"], description: "Study Filipino language, literature, and communication." },
-  { name: "BS Forensic Science", strands: ["STEM"], cost: 2, passions: ["Science & Research", "Health & Medicine"], skills: ["General Chemistry", "Capstone Research"], description: "Use science to help investigate crimes and examine evidence." },
-  { name: "AB Islamic Studies", strands: ["HUMSS"], cost: 1, passions: ["Social Sciences & Culture", "Community & Social Development"], skills: ["Introduction to World Religions & Belief Systems", "Community Engagement, Solidarity & Citizenship"], description: "Study Islamic beliefs, history, and culture." },
-  { name: "BS Environmental Science", strands: ["STEM"], cost: 1, passions: ["Science & Research"], skills: ["General Chemistry", "Capstone Research"], description: "Study the environment and find solutions to ecological problems." },
-  { name: "BS Forestry", strands: ["STEM"], cost: 1, passions: ["Science & Research"], skills: ["Capstone Research", "General Chemistry"], description: "Protect and manage forests and natural resources." },
-  { name: "BS Fisheries", strands: ["STEM"], cost: 1, passions: ["Science & Research"], skills: ["General Chemistry", "Capstone Research"], description: "Study and manage fish, aquatic resources, and coastal areas." },
-  { name: "BS Geology", strands: ["STEM"], cost: 2, passions: ["Science & Research", "Math & Engineering"], skills: ["General Physics", "General Chemistry"], description: "Study the earth, rocks, minerals, and natural hazards." },
-  { name: "BS Biology", strands: ["STEM"], cost: 1, passions: ["Science & Research", "Health & Medicine"], skills: ["General Chemistry", "Capstone Research"], description: "Study living things, from cells to ecosystems." },
-  { name: "BS Molecular Biology", strands: ["STEM"], cost: 2, passions: ["Science & Research", "Health & Medicine"], skills: ["General Chemistry", "Capstone Research"], description: "Study life at the level of cells, genes, and molecules." },
-  { name: "BS Physics", strands: ["STEM"], cost: 1, passions: ["Science & Research", "Math & Engineering"], skills: ["General Physics", "Capstone Research"], description: "Study matter, energy, and the laws of nature." },
-  { name: "BS Applied Physics", strands: ["STEM"], cost: 2, passions: ["Math & Engineering", "Science & Research", "Technology & Innovation"], skills: ["General Physics", "Capstone Research"], description: "Use physics to solve problems in technology and industry." },
-  { name: "BS Chemistry", strands: ["STEM"], cost: 2, passions: ["Science & Research", "Health & Medicine"], skills: ["General Chemistry", "Capstone Research"], description: "Study substances, reactions, and materials in the laboratory." },
-  { name: "BS Computer Science", strands: ["STEM", "ICT"], cost: 1, passions: ["Programming & Software", "Computer Systems & Servicing", "Technology & Innovation"], skills: ["Java Programming", "Computer Systems Servicing", "General Physics", "Capstone Research"], description: "Learn programming, algorithms, and how software works." },
-  { name: "BS Information Technology", strands: ["STEM", "ICT"], cost: 1, passions: ["Programming & Software", "Computer Systems & Servicing", "Digital Media & Technology", "Technology & Innovation"], skills: ["Java Programming", "Computer Systems Servicing", "Work Immersion", "Capstone Research"], description: "Build, manage, and support computer systems and applications." },
-  { name: "BS Information Systems", strands: ["STEM", "ICT"], cost: 1, passions: ["Programming & Software", "Digital Media & Technology", "Technology & Innovation"], skills: ["Java Programming", "Work Immersion", "Capstone Research"], description: "Connect technology with business needs and information management." },
-  { name: "BS Mathematics", strands: ["STEM"], cost: 1, passions: ["Math & Engineering", "Science & Research"], skills: ["General Physics", "Capstone Research"], description: "Study numbers, patterns, and logical reasoning." },
-  { name: "BS Applied Mathematics", strands: ["STEM"], cost: 1, passions: ["Math & Engineering", "Science & Research", "Technology & Innovation"], skills: ["General Physics", "Capstone Research"], description: "Use mathematics to solve real problems in science and industry." },
-  { name: "BS Statistics", strands: ["STEM", "ABM"], cost: 1, passions: ["Math & Engineering", "Science & Research", "Economics & Management", "Finance & Accounting"], skills: ["Capstone Research", "Applied Economics", "Business Finance"], description: "Collect and analyze data to support decisions." },
-  { name: "BS Agriculture", strands: ["STEM", "Home Economics"], cost: 1, passions: ["Science & Research", "Culinary & Food Services", "Bread & Pastry Production"], skills: ["General Chemistry", "Work Immersion", "Bread and Pastry Production"], description: "Learn how crops and farm animals are grown and managed." },
-  { name: "BS Agribusiness", strands: ["ABM", "Home Economics"], cost: 1, passions: ["Business & Entrepreneurship", "Marketing & Sales", "Culinary & Food Services", "Housekeeping & Hospitality"], skills: ["Business Finance", "Business Ethics", "Work Immersion", "Housekeeping"], description: "Run and manage businesses in farming and food products." },
-  { name: "BS Agroforestry", strands: ["STEM"], cost: 1, passions: ["Science & Research"], skills: ["General Chemistry", "Capstone Research"], description: "Combine farming and forestry for sustainable land use." },
-  { name: "BS Architecture", strands: ["STEM"], cost: 2, passions: ["Math & Engineering", "Technology & Innovation"], skills: ["General Physics", "Capstone Research"], description: "Design buildings and spaces for people and communities." },
-  { name: "B Landscape Architecture", strands: ["STEM"], cost: 2, passions: ["Math & Engineering", "Science & Research"], skills: ["General Physics", "Capstone Research"], description: "Plan and design outdoor environments and landscapes." },
-  { name: "BS Interior Design", strands: ["STEM", "Home Economics"], cost: 2, passions: ["Math & Engineering", "Technology & Innovation", "Housekeeping & Hospitality", "Home Management & Caregiving"], skills: ["General Physics", "Capstone Research", "Housekeeping", "Work Immersion"], description: "Plan and design comfortable and attractive indoor spaces." },
-  { name: "BSEd Major in Mathematics", strands: ["STEM"], cost: 1, passions: ["Math & Engineering", "Science & Research"], skills: ["General Physics", "Capstone Research"], description: "Become a mathematics teacher in junior and senior high school." },
-  { name: "BSEd Major in Physics", strands: ["STEM"], cost: 1, passions: ["Science & Research", "Math & Engineering"], skills: ["General Physics", "Capstone Research"], description: "Become a physics teacher and help students understand how the world works." },
-  { name: "BS Accountancy", strands: ["ABM"], cost: 2, passions: ["Finance & Accounting", "Economics & Management"], skills: ["Fundamentals of Accountancy, Business & Management", "Business Finance"], description: "Work with financial records, reports, and decisions." },
-  { name: "BS Accounting Technology", strands: ["ABM", "Home Economics"], cost: 1, passions: ["Finance & Accounting", "Economics & Management", "Home Management & Caregiving"], skills: ["Fundamentals of Accountancy, Business & Management", "Business Finance", "Work Immersion"], description: "Handle accounting records and systems for businesses." },
+  // ---------- STEM ----------
+  { name: "BS Civil Engineering", strands: ["STEM"], cost: 2, passions: ["Engineering & Architecture", "Technology & Innovation"], skills: ["Engineering & Design", "Mathematics & Physical Sciences"], description: "Design and build roads, bridges, buildings, and water systems." },
+  { name: "BS Electrical Engineering", strands: ["STEM"], cost: 2, passions: ["Engineering & Architecture", "Technology & Innovation"], skills: ["Mathematics & Physical Sciences", "Engineering & Design"], description: "Work with power systems, wiring, and electrical equipment." },
+  { name: "BS Electronics Engineering", strands: ["STEM"], cost: 2, passions: ["Technology & Innovation", "Engineering & Architecture"], skills: ["Engineering & Design", "Mathematics & Physical Sciences"], description: "Design circuits, communication systems, and smart devices." },
+  { name: "BS Mechanical Engineering", strands: ["STEM"], cost: 2, passions: ["Engineering & Architecture", "Technology & Innovation"], skills: ["Engineering & Design", "Mathematics & Physical Sciences"], description: "Design machines, engines, and manufacturing systems." },
+  { name: "BS Architecture", strands: ["STEM"], cost: 2, passions: ["Engineering & Architecture", "Technology & Innovation"], skills: ["Engineering & Design", "Mathematics & Physical Sciences"], description: "Design buildings and spaces for people and communities." },
+  { name: "BS Environmental Science", strands: ["STEM"], cost: 1, passions: ["Science & Environment"], skills: ["Research & Analysis", "Biology & Health Sciences"], description: "Study the environment and find solutions to ecological problems." },
+  { name: "Bachelor of Applied Science in Laboratory Technology", strands: ["STEM"], cost: 1, passions: ["Science & Environment", "Healthcare & Medical Sciences"], skills: ["Research & Analysis", "Biology & Health Sciences"], description: "Run laboratory tests and support scientific research." },
+  { name: "BS Food Technology", strands: ["STEM", "Home Economics"], cost: 1, passions: ["Science & Environment", "Technology & Innovation", "Culinary & Food Science"], skills: ["Research & Analysis", "Biology & Health Sciences", "Food Preparation & Safety"], description: "Apply science to produce safe, nutritious, and long-lasting food." },
+  { name: "BS Nursing", strands: ["STEM"], cost: 2, passions: ["Healthcare & Medical Sciences"], skills: ["Biology & Health Sciences", "Research & Analysis"], description: "Care for patients and support health in hospitals and communities." },
+  { name: "BS Medical Technology", strands: ["STEM"], cost: 2, passions: ["Healthcare & Medical Sciences", "Science & Environment"], skills: ["Biology & Health Sciences", "Research & Analysis"], description: "Perform laboratory tests that help doctors diagnose illness." },
+  { name: "BS Pharmacy", strands: ["STEM"], cost: 2, passions: ["Healthcare & Medical Sciences", "Science & Environment"], skills: ["Biology & Health Sciences", "Mathematics & Physical Sciences"], description: "Learn how medicines are made, used, and safely given to patients." },
+
+  // ---------- ABM ----------
+  { name: "BS Accountancy", strands: ["ABM"], cost: 2, passions: ["Finance & Accounting", "Economics & Analysis"], skills: ["Accounting & Finance", "Economics & Management"], description: "Work with financial records, reports, and decisions." },
+  { name: "BS Accounting Technology", strands: ["ABM"], cost: 1, passions: ["Finance & Accounting", "Business & Entrepreneurship"], skills: ["Accounting & Finance", "Business Planning"], description: "Handle accounting records and systems for businesses." },
+  { name: "BS Business Management", strands: ["ABM"], cost: 1, passions: ["Marketing & Management", "Business & Entrepreneurship"], skills: ["Economics & Management", "Communication & Organization", "Business Planning"], description: "Learn to plan, organize, and lead a business." },
+  { name: "BS Entrepreneurship", strands: ["ABM"], cost: 1, passions: ["Business & Entrepreneurship", "Marketing & Management"], skills: ["Business Planning", "Communication & Organization"], description: "Start and grow your own business." },
+  { name: "BS Hospitality Management", strands: ["ABM", "Home Economics"], cost: 2, passions: ["Marketing & Management", "Business & Entrepreneurship", "Hospitality & Tourism", "Culinary & Food Science"], skills: ["Communication & Organization", "Business Planning", "Care & Hospitality Services", "Resource Management"], description: "Manage hotels, restaurants, and tourism services." },
+  { name: "BS Economics", strands: ["ABM"], cost: 1, passions: ["Economics & Analysis", "Finance & Accounting"], skills: ["Economics & Management", "Accounting & Finance"], description: "Analyze markets, money, and policies using data and theory." },
+
+  // ---------- HUMSS ----------
+  { name: "AB History", strands: ["HUMSS"], cost: 1, passions: ["Arts, Culture & Education"], skills: ["Social Sciences & History", "Language & Writing"], description: "Study the past to understand people, culture, and society." },
+  { name: "AB Philosophy", strands: ["HUMSS"], cost: 1, passions: ["Arts, Culture & Education", "Law & Public Service"], skills: ["Critical Thinking & Logic", "Social Sciences & History"], description: "Explore ideas about knowledge, ethics, and how people live." },
+  { name: "AB English", strands: ["HUMSS"], cost: 1, passions: ["Communication & Media", "Arts, Culture & Education"], skills: ["Language & Writing", "People & Communication Skills"], description: "Study the English language, communication, and writing." },
+  { name: "AB Linguistics", strands: ["HUMSS"], cost: 1, passions: ["Communication & Media", "Arts, Culture & Education"], skills: ["Language & Writing", "Critical Thinking & Logic"], description: "Study how language works and how people use it." },
+  { name: "AB Literature", strands: ["HUMSS"], cost: 1, passions: ["Arts, Culture & Education", "Communication & Media"], skills: ["Language & Writing", "Social Sciences & History"], description: "Read, analyze, and write about literary works." },
+  { name: "AB Psychology", strands: ["HUMSS"], cost: 1, passions: ["Psychology & Social Work"], skills: ["People & Communication Skills", "Critical Thinking & Logic"], description: "Understand human behavior, thinking, and feelings." },
+  { name: "BS Psychology", strands: ["HUMSS"], cost: 1, passions: ["Psychology & Social Work"], skills: ["Critical Thinking & Logic", "People & Communication Skills"], description: "Study behavior and mental processes using science and research." },
+  { name: "BS Criminology", strands: ["HUMSS"], cost: 1, passions: ["Law & Public Service"], skills: ["Critical Thinking & Logic", "Social Sciences & History"], description: "Study crime, justice, and community safety." },
+  { name: "AB Political Science", strands: ["HUMSS"], cost: 1, passions: ["Law & Public Service"], skills: ["Social Sciences & History", "Critical Thinking & Logic"], description: "Study government, politics, and public policy." },
+  { name: "AB Sociology", strands: ["HUMSS"], cost: 1, passions: ["Psychology & Social Work", "Arts, Culture & Education"], skills: ["Social Sciences & History", "People & Communication Skills"], description: "Study groups, communities, and social change." },
+  { name: "AB Anthropology", strands: ["HUMSS"], cost: 1, passions: ["Arts, Culture & Education", "Psychology & Social Work"], skills: ["Social Sciences & History", "Critical Thinking & Logic"], description: "Study people, cultures, and how societies change." },
+  { name: "BS Forensic Science", strands: ["HUMSS"], cost: 2, passions: ["Law & Public Service"], skills: ["Critical Thinking & Logic", "Social Sciences & History"], description: "Use science to help investigate crimes and examine evidence." },
+  { name: "AB Communication", strands: ["HUMSS"], cost: 1, passions: ["Communication & Media"], skills: ["People & Communication Skills", "Language & Writing"], description: "Learn to communicate through media, speech, and public relations." },
+  { name: "AB Journalism", strands: ["HUMSS"], cost: 1, passions: ["Communication & Media", "Law & Public Service"], skills: ["Language & Writing", "Social Sciences & History"], description: "Gather, write, and report news for print, broadcast, and online media." },
+  { name: "Bachelor of Elementary Education", strands: ["HUMSS"], cost: 1, passions: ["Arts, Culture & Education", "Psychology & Social Work"], skills: ["People & Communication Skills", "Language & Writing"], description: "Become a teacher who guides children in the early grades." },
+  { name: "Bachelor of Secondary Education", strands: ["HUMSS"], cost: 1, passions: ["Arts, Culture & Education"], skills: ["Language & Writing", "Social Sciences & History", "People & Communication Skills"], description: "Become a high school teacher in the subject you love." },
+
+  // ---------- HE ----------
+  { name: "BS Industrial Education – Home Economics", strands: ["Home Economics"], cost: 1, passions: ["Home Management & Livelihood", "Fashion & Design"], skills: ["Resource Management", "Care & Hospitality Services", "Design & Handicrafts"], description: "Teach home and livelihood skills such as cooking, sewing, and home care." },
+  { name: "Bachelor of Technology in Culinary Technology", strands: ["Home Economics"], cost: 2, passions: ["Culinary & Food Science"], skills: ["Food Preparation & Safety", "Resource Management"], description: "Master professional cooking, baking, and kitchen management." },
+  { name: "BS Entrepreneurship – Food & Livelihood", strands: ["Home Economics"], cost: 1, passions: ["Home Management & Livelihood", "Culinary & Food Science"], skills: ["Resource Management", "Food Preparation & Safety"], description: "Start a food business or livelihood project, from product to profit." },
+  { name: "Bachelor of Technology in Apparel and Fashion", strands: ["Home Economics"], cost: 2, passions: ["Fashion & Design"], skills: ["Design & Handicrafts", "Resource Management"], description: "Design, cut, and produce clothing and fashion products." },
+
+  // ---------- ICT ----------
+  { name: "BS Computer Science", strands: ["ICT"], cost: 1, passions: ["Programming & Software", "Data & Technology Systems"], skills: ["Coding & Programming", "Technical Problem Solving"], description: "Learn programming, algorithms, and how software works." },
+  { name: "BS Information Technology", strands: ["ICT"], cost: 1, passions: ["Data & Technology Systems", "Programming & Software"], skills: ["Computer Systems", "Technical Problem Solving", "Coding & Programming"], description: "Build, manage, and support computer systems and applications." },
+  { name: "BS Information Systems", strands: ["ICT"], cost: 1, passions: ["Data & Technology Systems", "Programming & Software"], skills: ["Computer Systems", "Coding & Programming"], description: "Connect technology with business needs and information management." },
+  { name: "Bachelor of Multimedia Arts / Graphic Technology", strands: ["ICT"], cost: 2, passions: ["Digital Media & Animation"], skills: ["Digital & Graphic Design"], description: "Create digital art, graphics, video, and visual content." },
+  { name: "BS Animation", strands: ["ICT"], cost: 2, passions: ["Digital Media & Animation"], skills: ["Digital & Graphic Design", "Technical Problem Solving"], description: "Bring characters and stories to life through 2D and 3D animation." },
+  { name: "BS Computer Engineering Technology", strands: ["ICT"], cost: 2, passions: ["Engineering Tech & Robotics", "Data & Technology Systems"], skills: ["Technical Problem Solving", "Computer Systems"], description: "Build and maintain computer hardware, electronics, and robotic systems." },
 ];
 
 let currentPage = 1;
@@ -251,6 +262,7 @@ function setTheme(strand) {
   const info = strandInfo[strand];
   document.body.className = `theme-${info.theme}`;
   document.body.dataset.themeIcon = info.icon;
+  applyStrandColor(strand);
   setBackground(info.bg, info.theme);
   renderOptions("passion-options", "passion", info.passions);
   renderOptions("skills-options", "skill", info.skills);
@@ -295,62 +307,44 @@ function financialScore(course) {
   return Math.max(20, Math.min(100, score));
 }
 
-// IT / technology courses: ICT-tagged programs and the BIT technology programs
-function isTechCourse(course) {
-  return course.strands.includes("ICT") || /^BIT /.test(course.name);
+// Q7 / Q8 match: the position of the student's answer in a course's tag list sets the strength
+// (first tag = best fit). No tag match gives a low baseline so related courses can still appear.
+function tagFit(tags, answer) {
+  const i = tags.indexOf(answer);
+  return i === -1 ? 35 : Math.max(70, 100 - i * 10);
 }
 
 function scoreCourse(course) {
-  const financial = financialScore(course);
-  const passion = course.passions.includes(profile.passion) ? 100 : 35;
-  const skills = course.skills.includes(profile.skill) ? 100 : 35;
-  const total = Math.round(financial * 0.30 + passion * 0.35 + skills * 0.35);
+  const passion = tagFit(course.passions, profile.passion);
+  const skills = tagFit(course.skills, profile.skill);
+  const total = Math.round(passion * 0.5 + skills * 0.5);
+  const passionHit = passion > 35, skillHit = skills > 35;
   const reasons = [];
-  reasons.push(course.passions.includes(profile.passion) ? "matches your passion" : "offers a related interest area");
-  reasons.push(course.skills.includes(profile.skill) ? "matches your strongest skill" : "can develop your selected skill");
-  reasons.push(financial >= 70 ? "fits your budget preference" : "needs careful tuition planning");
-  return { course, total, reasons };
-}
-
-function makeRecommendations() {
-  let possibleCourses = courses.filter((course) => course.strands.includes(profile.strand));
-  const isSTEM = profile.strand === "STEM";
-  let wantsTech = false;
-  if (isSTEM) {
-    // STEM students see IT courses only when they chose Technology & Innovation (and not General Physics).
-    // Otherwise they see science and engineering courses only.
-    wantsTech = profile.passion === "Technology & Innovation" && profile.skill !== "General Physics";
-    possibleCourses = possibleCourses.filter((course) => isTechCourse(course) === wantsTech);
+  if (passionHit && skillHit) {
+    reasons.push(`Recommended because it matches your passion for ${profile.passion} and strength in ${profile.skill}`);
+  } else if (passionHit) {
+    reasons.push(`Recommended because it matches your passion for ${profile.passion}, and it can help you build skills in ${profile.skill}`);
+  } else if (skillHit) {
+    reasons.push(`Recommended because it matches your strength in ${profile.skill}, and it can grow your interest in ${profile.passion}`);
+  } else {
+    reasons.push(`A related course in your strand that can grow your interest in ${profile.passion} and your skills in ${profile.skill}`);
   }
-  const ranked = possibleCourses.map(scoreCourse).sort((a, b) => b.total - a.total);
-  if (!(isSTEM && !wantsTech)) return ranked.slice(0, 3);
-  // STEM mix: Architecture for engineering, design, or technology interest; a math or physics teacher course as the 3rd suggestion
-  const pick = (name) => ranked.find((r) => r.course.name === name);
-  const arch = ["Math & Engineering", "Technology & Innovation"].includes(profile.passion) ? pick("BS Architecture") : null;
-  const teacherName = profile.skill === "General Physics" ? "BSEd Major in Physics" : (profile.passion === "Math & Engineering" ? "BSEd Major in Mathematics" : null);
-  const teacher = teacherName ? pick(teacherName) : null;
-  const fixed = [arch, teacher].filter(Boolean);
-  const top = ranked.filter((r) => !fixed.includes(r)).slice(0, 3 - fixed.length);
-  if (arch) top.push(arch);
-  top.sort((x, y) => y.total - x.total);
-  if (teacher) top.push(teacher);
-  return top;
+  const financial = financialScore(course);
+  reasons.push(financial >= 70 ? "Fits your budget preference" : "Needs careful tuition planning");
+  return { course, total, reasons, financial };
 }
 
-// STEM students who chose Technology & Innovation: how well IT courses fit their interest and abilities (income not included)
-let lastITFit = null;
-function itFitForSTEM() {
-  if (profile.strand !== "STEM" || profile.passion !== "Technology & Innovation") return null;
-  const list = courses
-    .filter((course) => course.strands.includes("STEM") && isTechCourse(course))
-    .map((course) => ({
-      course,
-      percent: Math.round((course.passions.includes(profile.passion) ? 100 : 35) * 0.5 + (course.skills.includes(profile.skill) ? 100 : 35) * 0.5)
-    }))
-    .sort((a, b) => b.percent - a.percent)
+// 1) filter by the student's strand only, 2) rank by Q7 + Q8 match (budget only breaks ties), 3) keep the top 3
+function makeRecommendations() {
+  return courses
+    .filter((course) => course.strands.includes(profile.strand))
+    .map(scoreCourse)
+    .sort((a, b) => b.total - a.total || b.financial - a.financial)
     .slice(0, 3);
-  return list.length ? { percent: list[0].percent, list } : null;
 }
+
+// The old STEM-only "IT Course Fit" card no longer applies: courses now come from the student's own strand.
+let lastITFit = null;
 
 function renderResults() {
   recommendedCourses = makeRecommendations();
@@ -365,17 +359,8 @@ function renderResults() {
       ${resultDetails(result.course, index === 0)}
     </article>
   `).join("");
-  lastITFit = itFitForSTEM();
-  const showList = lastITFit && !recommendedCourses.every((r) => isTechCourse(r.course));
-  $("results-it").innerHTML = lastITFit ? `
-    <article class="result-card it-fit">
-      <div class="result-top">
-        <h3>IT Course Fit</h3>
-        <span class="score">${lastITFit.percent}% fit</span>
-      </div>
-      <p>Based on your interest in technology and your ${profile.skill} ability, IT courses fit you at ${lastITFit.percent}%. This uses your interest and abilities only, not your income.</p>
-      ${showList ? `<ul>${lastITFit.list.map((x) => `<li>${x.course.name}: ${x.percent}% fit</li>`).join("")}</ul>` : ""}
-    </article>` : "";
+  lastITFit = null;
+  $("results-it").innerHTML = "";
   playResultsSound();
   localStorage.setItem("careerfit_profile", JSON.stringify(profile));
   localStorage.setItem("careerfit_results", JSON.stringify(recommendedCourses.map((r) => r.course.name)));
@@ -495,7 +480,7 @@ function tuitionNote(course) {
 }
 function resultDetails(course, open) {
   const key = clusterOf(course.name);
-  const c = CLUSTERS[key];
+  const c = CLUSTERS[key] || CLUSTERS.other || { outlook: "Ask your guidance counselor about job outlook for this course.", jobs: "Varies by specialization.", grants: [] };
   const schools = SCHOOLS.filter((sc) => sc.c.includes(key)).slice(0, 5);
   const list = (arr) => `<ul>${arr.map((x) => `<li>${x}</li>`).join("")}</ul>`;
   return `<details class="more"${open ? " open" : ""}>
@@ -513,7 +498,7 @@ $("likert-interest").innerHTML = likertHTML(interestItems);
 IV_SECTIONS.slice(1).forEach((sec, k) => {
   const n = k + 2, items = sectionItems(sec), last = n === IV_SECTIONS.length;
   const el = document.createElement("section");
-  el.className = "screen"; el.id = `screen-iv-${n}`;
+  el.className = "screen card"; el.id = `screen-iv-${n}`;
   el.innerHTML = `
     <p class="eyebrow">Page ${n + 3} · Part II · Factor ${n} of 7</p>
     <h2>${sec.title}</h2>
@@ -522,7 +507,7 @@ IV_SECTIONS.slice(1).forEach((sec, k) => {
     <form id="form-iv-${n}" novalidate>
       ${likertHTML(items)}
       <p class="form-message" id="msg-iv-${n}"></p>
-      <button class="primary-button" type="submit">${last ? "See My Courses <span>✨</span>" : "Next <span>→</span>"}</button>
+      <button class="primary-button btn-primary" type="submit">${last ? "See My Courses <span>✨</span>" : "Next <span>→</span>"}</button>
     </form>`;
   $("screen-loading").before(el);
   $(`form-iv-${n}`).addEventListener("submit", (event) => {
@@ -590,10 +575,12 @@ $("btn-restart").addEventListener("click", () => {
   document.querySelectorAll(".option").forEach((option) => option.classList.remove("selected"));
   document.body.className = "theme-default";
   document.body.dataset.themeIcon = "✨";
+  applyStrandColor(null);
   setBackground("welcome", "default");
   setPage(1);
   showScreen("screen-welcome");
 });
 
 setBackground("welcome", "default");
+if (!selected("strand")) applyStrandColor(null); // homepage = light purple until a strand is chosen
 setPage(1);

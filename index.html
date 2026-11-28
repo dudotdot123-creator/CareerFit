@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CareerFit</title>
   <link rel="stylesheet" href="style.css">
+  <script src="strand-theme.js"></script>
 </head>
 <body class="theme-default" data-theme-icon="✨">
   <div class="bg-photo" id="bg-photo-1"></div>
@@ -24,7 +25,7 @@
   <main id="app">
     <!-- PAGE 1 -->
     <section class="screen active" id="screen-welcome">
-      <div class="hero-card">
+      <div class="hero-card card">
         <p class="eyebrow">Dampol 1st National High School · Grade 12</p>
         <h1>CareerFit</h1>
         <p class="hero-subtitle">Find courses that match your budget, passion, and skills.</p>
@@ -32,12 +33,12 @@
           Answer a few simple questions and discover your Top 3 college course matches.
         </p>
         <p class="source-note">Factors based on Lara (2025). System evaluation based on Alao et al. (2017).</p>
-        <button class="primary-button" id="btn-start">Start Exploring <span>→</span></button>
+        <button class="primary-button btn-primary" id="btn-start">Start Exploring <span>→</span></button>
       </div>
     </section>
 
     <!-- PAGE 2 -->
-    <section class="screen" id="screen-basic">
+    <section class="screen card" id="screen-basic">
       <p class="eyebrow">Page 2 · Part I · Demographic Profile</p>
       <h2>Tell us a little about yourself</h2>
       <p class="intro-text">Your name is optional. Select your strand to set your theme.</p>
@@ -66,12 +67,12 @@
           <label class="option"><input type="radio" name="strand" value="ICT"><span>ICT — TechPro Track</span></label>
         </div>
         <p class="form-message" id="basic-message"></p>
-        <button class="primary-button" type="submit">Next <span>→</span></button>
+        <button class="primary-button btn-primary" type="submit">Next <span>→</span></button>
       </form>
     </section>
 
     <!-- PAGE 3 -->
-    <section class="screen" id="screen-financial">
+    <section class="screen card" id="screen-financial">
       <p class="eyebrow">Page 3 · Part I · Demographic Profile (continued)</p>
       <h2>Family Monthly Income</h2>
       <p class="intro-text">Your family income helps us suggest realistic choices.</p>
@@ -85,12 +86,12 @@
         </div>
 
         <p class="form-message" id="financial-message"></p>
-        <button class="primary-button" type="submit">Next <span>→</span></button>
+        <button class="primary-button btn-primary" type="submit">Next <span>→</span></button>
       </form>
     </section>
 
     <!-- PAGE 4 (Factor 1). Pages 5 to 10 (Factors 2 to 7) are built by script.js from instrument-data.js -->
-    <section class="screen" id="screen-passion">
+    <section class="screen card" id="screen-passion">
       <p class="eyebrow">Page 4 · Part II · Factor 1 of 7</p>
       <h2>Personal Interest, Skills, and Abilities</h2>
       <p class="intro-text">These choices are filtered for your strand only.</p>
@@ -103,30 +104,30 @@
         <p class="field-label">How much do you agree with each statement?</p>
         <div id="likert-interest"></div>
         <p class="form-message" id="passion-message"></p>
-        <button class="primary-button" type="submit">Next <span>→</span></button>
+        <button class="primary-button btn-primary" type="submit">Next <span>→</span></button>
       </form>
     </section>
 
     <!-- LOADING -->
-    <section class="screen center-screen" id="screen-loading">
+    <section class="screen card center-screen" id="screen-loading">
       <div class="sparkle">✦</div>
       <h2>Finding your perfect path…</h2>
       <p class="intro-text">Comparing your budget, passion, and skills.</p>
     </section>
 
     <!-- PAGE 6 -->
-    <section class="screen" id="screen-results">
+    <section class="screen card" id="screen-results">
       <p class="eyebrow">Page 11 · Results</p>
       <h2>Your Top 3 Recommended Courses</h2>
       <p class="intro-text">These recommendations are a guide to help you explore your next steps.</p>
       <div id="results-list" class="results-list"></div>
       <div id="results-it" class="results-list"></div>
       <p class="source-note">Schools, tuition, scholarships, and job outlook are general estimates. Programs and fees change, so please confirm with each school before you apply.</p>
-      <button class="primary-button" id="btn-evaluation">Help Us Improve <span>→</span></button>
+      <button class="primary-button btn-primary" id="btn-evaluation">Help Us Improve <span>→</span></button>
     </section>
 
     <!-- PAGE 12 -->
-    <section class="screen" id="screen-evaluation">
+    <section class="screen card" id="screen-evaluation">
       <p class="eyebrow">Page 12 · Part III · System Evaluation</p>
       <h2>Tell us what you think</h2>
       <p class="intro-text">Your answers will help improve CareerFit.</p>
@@ -159,16 +160,16 @@
         <div id="likert-eval_c"></div>
         <p class="source-note">Based on the evaluation framework of Alao et al. (2017).</p>
         <p class="form-message" id="evaluation-message"></p>
-        <button class="primary-button" type="submit">Submit <span>✅</span></button>
+        <button class="primary-button btn-primary" type="submit">Submit <span>✅</span></button>
       </form>
     </section>
 
     <!-- PAGE 13 -->
-    <section class="screen center-screen" id="screen-thank-you">
+    <section class="screen card center-screen" id="screen-thank-you">
       <div class="thank-you-icon">✨</div>
       <h2>Your future looks bright ✨</h2>
       <p class="intro-text">Responses have been recorded. Keep exploring the path that feels right for you.</p>
-      <button class="primary-button" id="btn-download">⬇ Download my response</button>
+      <button class="primary-button btn-primary" id="btn-download">⬇ Download my response</button>
       <button class="secondary-button" id="btn-restart">Start Over</button>
       <a class="secondary-button" id="btn-view-record" href="record-full.html">📄 View Full Record</a>
     </section>
